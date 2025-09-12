@@ -13,6 +13,6 @@ public class ClientesModel {
     private String nrocalle,referencia,latitud,longitud;
     private Integer estareg;
     private String fechareg,creador,fechabaja,observacion_baja;
-
+    private Integer cobertura_id;
 
 }

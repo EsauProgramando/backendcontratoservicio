@@ -9,5 +9,6 @@ package org.autoservicio.backendcontratoservicio.model.mantenimientos;
         private Integer id_tipo;
         private String descripcion;
         private Integer estareg;
+        private boolean es_servicio;
     }
 

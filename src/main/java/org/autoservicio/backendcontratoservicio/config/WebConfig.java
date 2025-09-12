@@ -12,6 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**") // Aplica a todas las rutas que comienzan con /api
                 .allowedOrigins(
                         "https://agoisp.pro",
+                        "https://pago.agoisp.pro",
                         "http://localhost:4200",
                         "http://31.97.133.166"
                 )
@@ -19,10 +20,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*") // Permite todos los encabezados
                 .allowCredentials(true); // Permite el envío de cookies
     }
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Sirve todos los archivos dentro de app.upload.dir en /uploads/**
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:/D:/sysco2023/proyecto autoservicio/");
-    }
+
 }

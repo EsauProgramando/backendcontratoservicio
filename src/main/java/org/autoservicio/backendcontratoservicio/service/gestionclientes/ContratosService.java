@@ -20,11 +20,11 @@ public class ContratosService {
         return Mono.fromCallable(() -> this.repo.listadosContratos());
     }
     public Mono<Detalle_contratoxservicioRequest> buscar_contratoxservicio(
-            Integer id_cliente, Integer nrocontrato
+            Integer id_cliente, Integer id_contrato
     ) {
         return Mono.fromCallable(() -> {
-            var cab = repo.buscarpor_contratos(id_cliente, nrocontrato);
-            var ite = repo.buscar_servicio_pornrocontrato(nrocontrato);
+            var cab = repo.buscarpor_contratos(id_cliente, id_contrato );
+            var ite = repo.buscar_servicio_pornrocontrato(id_contrato );
             return new Detalle_contratoxservicioRequest(cab, ite);
         }).subscribeOn(Schedulers.boundedElastic());
     }
@@ -33,8 +33,12 @@ public class ContratosService {
         return Mono.fromCallable(() -> this.repo.registrarcontrato(op,obj));
     }
 
-    public Mono<ContratoResponse> buscarpor_contratos(Integer id_cliente, Integer nrocontrato) {
-        return Mono.fromCallable(() -> this.repo.buscarpor_contratos(id_cliente, nrocontrato));
+    public Mono<ContratoResponse> buscarpor_contratos(Integer id_cliente, Integer id_contrato) {
+        return Mono.fromCallable(() -> this.repo.buscarpor_contratos(id_cliente, id_contrato));
+    }
+
+    public Mono<responseModel> generar_facturas_contrato(Integer id_contrato, Integer id_cliente) {
+        return Mono.fromCallable(() -> this.repo.generar_facturas_contrato(id_contrato, id_cliente));
     }
 
 }

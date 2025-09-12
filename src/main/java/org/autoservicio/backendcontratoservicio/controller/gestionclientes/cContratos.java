@@ -6,15 +6,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.autoservicio.backendcontratoservicio.config.genericModel;
 import org.autoservicio.backendcontratoservicio.config.responseModel;
 import org.autoservicio.backendcontratoservicio.excepciones.GenericoException;
+import org.autoservicio.backendcontratoservicio.model.DriveFileInfo;
 import org.autoservicio.backendcontratoservicio.model.gestionclientes.ContratosModel;
+import org.autoservicio.backendcontratoservicio.model.mantenimientos.TipocalleModel;
 import org.autoservicio.backendcontratoservicio.response.Detalle_contratoxservicioRequest;
 import org.autoservicio.backendcontratoservicio.response.ServicioContratadoRequest;
+import org.autoservicio.backendcontratoservicio.service.GoogleDriveService;
+import org.autoservicio.backendcontratoservicio.service.SParamae;
 import org.autoservicio.backendcontratoservicio.service.gestionclientes.ContratosService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 import org.springframework.beans.factory.annotation.Value;
+import reactor.core.scheduler.Schedulers;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +32,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @RestController
@@ -29,8 +41,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class cContratos {
     private final ContratosService service;
-    @Value("${app.upload.dir}")
-    private String uploadDir;
+    @Autowired
+    private GoogleDriveService googleDriveService;
+
+    @Autowired
+    private SParamae service_paramae;
 
     @GetMapping("/listar")
     public Mono<ResponseEntity<genericModel<List<ServicioContratadoRequest>>>> obtener_listadosContratos() {
@@ -40,12 +55,12 @@ public class cContratos {
                 .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
                 .onErrorResume(GenericoException::error);
     }
-    @GetMapping("/detalle_contratos_x_servicio/{id_cliente}/{nrocontrato}")
+    @GetMapping("/detalle_contratos_x_servicio/{id_cliente}/{id_contrato}")
     public Mono<ResponseEntity<genericModel<Detalle_contratoxservicioRequest>>> buscar_contratoxservicio(
             @PathVariable Integer id_cliente,
-            @PathVariable Integer nrocontrato
+            @PathVariable Integer id_contrato
     ) {
-        return service.buscar_contratoxservicio(id_cliente, nrocontrato)
+        return service.buscar_contratoxservicio(id_cliente, id_contrato)
                 .flatMap(GenericoException::success)
                 .doOnSuccess(resp -> log.info("Operación exitosa"))
                 .doOnError(err -> log.error("Error en operación: {}", err.getMessage()))
@@ -59,67 +74,57 @@ public class cContratos {
             @RequestPart(value = "fileDocumento", required = false) MultipartFile fileDocumento,
             @RequestPart(value = "fileCroquis", required = false) MultipartFile fileCroquis
     ) {
-        return Mono.fromCallable(() -> {
-                    ObjectMapper mapper = new ObjectMapper();
-                    return mapper.readValue(contratoJson, ContratosModel.class);
-                })
-                .flatMap(contrato -> {
-                    if (op == 2 && contrato.getId_contrato() != null) {
-                        // Edición: buscamos el contrato existente
-                        return service.buscarpor_contratos(
-                                        contrato.getId_cliente(),
-                                        contrato.getId_contrato()
-                                )
-                                .flatMap(existente -> {
-                                    try {
-                                        // soporte contrato
-                                        if (fileContrato != null && !fileContrato.isEmpty()) {
-                                            if (existente.getUrl_soporte_contrato() != null)
-                                                deleteFile(existente.getUrl_soporte_contrato());
-                                            contrato.setUrl_soporte_contrato(saveFile(fileContrato, "contratos"));
-                                        } else {
-                                            contrato.setUrl_soporte_contrato(existente.getUrl_soporte_contrato());
-                                        }
+        return Mono.fromCallable(() -> new ObjectMapper().readValue(contratoJson, ContratosModel.class))
+                .flatMap(contrato ->
+                        service_paramae.buscar_x_ID("DRV", "CONTRA")
+                                .flatMap(param -> Mono.fromCallable(() -> {
+                                    String folderId = param.getValorstring();
+                                    String prefijo = contrato.getId_contrato() + "_" + contrato.getId_cliente() + "_";
+                                    // fileContrato
+                                    if (fileContrato != null && !fileContrato.isEmpty()) {
+                                        java.io.File tempFile = java.io.File.createTempFile(prefijo + "contrato-", fileContrato.getOriginalFilename());
+                                        fileContrato.transferTo(tempFile);
 
-                                        // documento
-                                        if (fileDocumento != null && !fileDocumento.isEmpty()) {
-                                            if (existente.getUrl_documento() != null)
-                                                deleteFile(existente.getUrl_documento());
-                                            contrato.setUrl_documento(saveFile(fileDocumento, "documentos"));
-                                        } else {
-                                            contrato.setUrl_documento(existente.getUrl_documento());
-                                        }
+                                        String webViewLink = googleDriveService.uploadFile(tempFile, folderId);
+                                        String fileId = extractFileId(webViewLink);
 
-                                        // croquis
-                                        if (fileCroquis != null && !fileCroquis.isEmpty()) {
-                                            if (existente.getUrl_croquis() != null)
-                                                deleteFile(existente.getUrl_croquis());
-                                            contrato.setUrl_croquis(saveFile(fileCroquis, "croquis"));
-                                        } else {
-                                            contrato.setUrl_croquis(existente.getUrl_croquis());
-                                        }
+                                        contrato.setUrl_soporte_contrato(webViewLink);
+                                        contrato.setId_soporte_contrato(fileId);
 
-                                        return Mono.just(contrato);
-                                    } catch (IOException e) {
-                                        return Mono.error(new RuntimeException("Error guardando archivo", e));
+                                        tempFile.delete();
                                     }
-                                });
-                    } else {
-                        // Nuevo registro (op = 1): no buscar, solo guardar archivos
-                        try {
-                            if (fileContrato != null && !fileContrato.isEmpty())
-                                contrato.setUrl_soporte_contrato(saveFile(fileContrato, "contratos"));
-                            if (fileDocumento != null && !fileDocumento.isEmpty())
-                                contrato.setUrl_documento(saveFile(fileDocumento, "documentos"));
-                            if (fileCroquis != null && !fileCroquis.isEmpty())
-                                contrato.setUrl_croquis(saveFile(fileCroquis, "croquis"));
-                            return Mono.just(contrato);
-                        } catch (IOException e) {
-                            return Mono.error(new RuntimeException("Error guardando archivo", e));
-                        }
-                    }
-                })
-                // Guardamos el contrato en la base de datos
+
+// fileDocumento
+                                    if (fileDocumento != null && !fileDocumento.isEmpty()) {
+                                        java.io.File tempFile = java.io.File.createTempFile(prefijo + "documento-", fileDocumento.getOriginalFilename());
+                                        fileDocumento.transferTo(tempFile);
+
+                                        String webViewLink = googleDriveService.uploadFile(tempFile, folderId);
+                                        String fileId = extractFileId(webViewLink);
+
+                                        contrato.setUrl_documento(webViewLink);
+                                        contrato.setId_documento(fileId);
+
+                                        tempFile.delete();
+                                    }
+
+// fileCroquis
+                                    if (fileCroquis != null && !fileCroquis.isEmpty()) {
+                                        java.io.File tempFile = java.io.File.createTempFile(prefijo + "croquis-", fileCroquis.getOriginalFilename());
+                                        fileCroquis.transferTo(tempFile);
+
+                                        String webViewLink = googleDriveService.uploadFile(tempFile, folderId);
+                                        String fileId = extractFileId(webViewLink);
+
+                                        contrato.setUrl_croquis(webViewLink);
+                                        contrato.setId_croquis(fileId);
+
+                                        tempFile.delete();
+                                    }
+                                    return contrato;
+
+                                }).subscribeOn(Schedulers.boundedElastic()))
+                )
                 .flatMap(c -> service.registrarcontrato(op, c))
                 .flatMap(GenericoException::success)
                 .doOnSuccess(r -> log.info("Operación exitosa"))
@@ -127,50 +132,45 @@ public class cContratos {
                 .onErrorResume(GenericoException::error);
     }
 
-    // Guardar archivo con UUID y extensión si existe
-    private String saveFile(MultipartFile file, String subDir) throws IOException {
-        if (file == null || file.isEmpty()) return null;
+    //extra extraer id de la imagen
 
-        Path dirPath = Paths.get(uploadDir, subDir);
-        Files.createDirectories(dirPath);
-
-        // Obtener extensión de forma segura
-        String extension = "";
-        String originalName = file.getOriginalFilename();
-        if (originalName != null && originalName.contains(".")) {
-            extension = originalName.substring(originalName.lastIndexOf("."));
+    String extractFileId(String url) {
+        String regex = "[-\\w]{25,}"; // Los IDs de Drive son de 25+ caracteres (letras, números, guiones, guiones bajos)
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(url);
+        if (matcher.find()) {
+            return matcher.group();
         }
-
-        // Generar nombre único sin depender del cliente
-        String filename = UUID.randomUUID().toString() + extension;
-
-        Path filepath = dirPath.resolve(filename);
-
-        Files.copy(file.getInputStream(), filepath, StandardCopyOption.REPLACE_EXISTING);
-
-        return subDir + "/" + filename; // Ruta relativa
+        return null;
     }
 
+    @GetMapping("/generar-facturas/{id_contrato}/{id_cliente}")
+    public Mono<ResponseEntity<genericModel<responseModel>>> generar_facturas_contrato(
+            @PathVariable Integer id_contrato,
+            @PathVariable Integer id_cliente) {
+        return this.service.generar_facturas_contrato(id_contrato,id_cliente)
+                .flatMap(GenericoException::success)
+                .doOnSuccess(response -> log.info("Operación exitosa"))
+                .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
+                .onErrorResume(GenericoException::error);
+    }
 
-    // 🔥 Eliminar archivo físico
-    private void deleteFile(String relativePath) {
+    @GetMapping("/mostrar")
+    public ResponseEntity<byte[]> mostrarImagen(@RequestParam String id) {
+        String urlDrive = "https://drive.google.com/uc?export=view&id=" + id;
         try {
-            Path path = Paths.get(uploadDir, relativePath);
-            Files.deleteIfExists(path);
-            log.info("Archivo eliminado: {}", relativePath);
-        } catch (IOException e) {
-            log.warn("No se pudo eliminar archivo: {}", relativePath, e);
+            byte[] imagenBytes = new RestTemplate().getForObject(urlDrive, byte[].class);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                    .body(imagenBytes);
+
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
-    private String generateFileName(String originalName) {
-        String extension = "";
-        int i = originalName.lastIndexOf('.');
-        if (i >= 0) {
-            extension = originalName.substring(i);
-        }
-        return UUID.randomUUID().toString() + extension;
-    }
 
 
 }
