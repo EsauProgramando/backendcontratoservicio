@@ -9,7 +9,8 @@ import java.util.List;
 
 public interface IContratosRepo {
     List<ServicioContratadoRequest> listadosContratos();
-    ContratoResponse buscarpor_contratos(Integer id_cliente,Integer nrocontrato);
-    List<ServicioContratadoRequest> buscar_servicio_pornrocontrato(Integer nrocontrato);
+    ContratoResponse buscarpor_contratos(Integer id_cliente,Integer id_contrato);
+    List<ServicioContratadoRequest> buscar_servicio_pornrocontrato(Integer id_contrato );
     responseModel registrarcontrato(Integer op, ContratosModel obj);
+    responseModel generar_facturas_contrato(Integer id_contrato, Integer id_cliente);
 }

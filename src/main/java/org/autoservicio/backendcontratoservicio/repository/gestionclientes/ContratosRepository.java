@@ -27,13 +27,13 @@ public class ContratosRepository extends IConfigGeneric implements IContratosRep
 
 
     @Override
-    public ContratoResponse buscarpor_contratos(Integer id_cliente, Integer nrocontrato) {
+    public ContratoResponse buscarpor_contratos(Integer id_cliente, Integer id_contrato) {
         String query = "CALL sp_buscarpor_contratos(?, ?)";
         try {
             return this.jTemplate().queryForObject(
                     query,
                     new BeanPropertyRowMapper<>(ContratoResponse.class),
-                    id_cliente, nrocontrato
+                    id_cliente, id_contrato
             );
         } catch (Exception ex) {
             throw new RepositorioException("Error al ejecutar sp_buscarpor_contratos: " + ex.getMessage());
@@ -41,13 +41,13 @@ public class ContratosRepository extends IConfigGeneric implements IContratosRep
     }
 
     @Override
-    public List<ServicioContratadoRequest> buscar_servicio_pornrocontrato(Integer nrocontrato) {
+    public List<ServicioContratadoRequest> buscar_servicio_pornrocontrato(Integer id_contrato) {
         String query = "CALL buscar_servicio_pornrocontrato(?)";
         try {
             return this.jTemplate().query(
                     query,
                     new BeanPropertyRowMapper<>(ServicioContratadoRequest.class),
-                    nrocontrato
+                    id_contrato
             );
         } catch (Exception ex) {
             throw new RepositorioException("Error al ejecutar buscar_servicio_pornrocontrato: " + ex.getMessage());
@@ -70,6 +70,24 @@ public class ContratosRepository extends IConfigGeneric implements IContratosRep
                     .build();
         } catch (Exception ex) {
             throw new RepositorioException("Error al registrar kardex: " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public responseModel generar_facturas_contrato(Integer id_contrato, Integer id_cliente) {
+        try {
+            // Llamada al procedimiento almacenado
+            String sql = "CALL sp_generar_facturas_contrato(?, ?)";
+
+            // Ejecutar el procedimiento y obtener el mensaje (si devuelve un String)
+            String mensaje = this.jTemplate().queryForObject(sql, String.class, id_contrato, id_cliente);
+
+            // Devolver responseModel
+            return responseModel.builder()
+                    .response(mensaje)
+                    .build();
+        } catch (Exception ex) {
+            throw new RepositorioException("Error al generar facturas del contrato: " + ex.getMessage());
         }
     }
 

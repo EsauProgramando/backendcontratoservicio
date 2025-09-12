@@ -16,6 +16,8 @@ public class ServicioContratadoRequest {
     private double cargo_instalacion;
     private String equipo_mac,notas;
     private Integer estareg;
+    private String estado;
+    private Boolean genera_facturacion;
 
 
 }

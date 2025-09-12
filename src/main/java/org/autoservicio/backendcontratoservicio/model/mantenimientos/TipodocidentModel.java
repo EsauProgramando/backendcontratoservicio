@@ -7,8 +7,4 @@ package org.autoservicio.backendcontratoservicio.model.mantenimientos;
 public class TipodocidentModel {
     private Integer tipodocident,longitud;
     private String descripcion,tipodocidenabr;
-
-
-
-
 }

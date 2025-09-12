@@ -7,7 +7,7 @@ package org.autoservicio.backendcontratoservicio.response;
 @lombok.Builder
 public class ContratoResponse {
     private Integer id_contrato;
-    private Integer id_cliente;
+    private Integer id_cliente,id_tipo;
     private String cliente;
     private String fecha_contrato,nrodocident;
     private String observaciones,nombre_completo,
@@ -17,4 +17,7 @@ public class ContratoResponse {
     private Boolean estareg;
    private String  url_soporte_contrato,url_documento,
             url_croquis;
+    private String id_soporte_contrato,id_documento,id_croquis;
+    private Integer tiempo_contrato, periodo_gracia;
+    private String estado;
 }

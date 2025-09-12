@@ -16,4 +16,6 @@ public class ClientesRequest {
     private String destipocalle,descripcioncalle,
             descripcioncorta,destipodocident,
             tipodocidenabr, direccion;
+    private Integer cobertura_id;
+
 }
