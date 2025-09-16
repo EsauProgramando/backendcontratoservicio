@@ -28,20 +28,15 @@ public class CorteServicioRepository extends IConfigGeneric implements ICorteSer
             String sql = "CALL usp_registrar_cortes(?, ?)";
 
             // Usamos update para ejecutar la consulta, ya que no esperamos un valor de retorno directo
-            this.jTemplate().update(sql, op, corte);
-
+            String mensaje = this.jTemplate().queryForObject(sql, String.class, op, corte);
             return responseModel.builder()
-                    .response("Corte registrado exitosamente.")
+                    .response(mensaje)
                     .build();
         } catch (Exception ex) {
             // Captura y manejo de excepciones
             throw new RepositorioException("Error al registrar corte: " + ex.getMessage());
         }
     }
-
-
-
-
 
     @Override
     public List<ClienteCortesPentientesRequest> obtener_cortes_pendientes_filtro(CortesfiltroEnvio enviodatos) {

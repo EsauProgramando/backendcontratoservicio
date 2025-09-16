@@ -16,4 +16,5 @@ public class PagosEnvio {
     private String id_adjuntaboleta;
     private String observaciones;
     private String creador;
+    private String ticket;
 }
