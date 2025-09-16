@@ -18,4 +18,6 @@ public class FacturacionRequest {
     private String observaciones;
     private Boolean estareg;
     private String fechareg,desctipo,email;
+    private Integer tipodocident;
+    private String nrodocident,direccion,url_pdf;
 }

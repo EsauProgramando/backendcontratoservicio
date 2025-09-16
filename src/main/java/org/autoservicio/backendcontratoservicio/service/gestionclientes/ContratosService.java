@@ -40,5 +40,11 @@ public class ContratosService {
     public Mono<responseModel> generar_facturas_contrato(Integer id_contrato, Integer id_cliente) {
         return Mono.fromCallable(() -> this.repo.generar_facturas_contrato(id_contrato, id_cliente));
     }
+    public Mono<List<ServicioContratadoRequest>> buscar_detalle_contratoxservicio(
+            Integer id_cliente, Integer id_contrato
+    ) {
+        return Mono.fromCallable(() ->
+             repo.buscar_servicio_pornrocontrato(id_contrato));
+    }
 
 }
