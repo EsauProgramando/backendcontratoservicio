@@ -23,4 +23,7 @@ public class OrdentrabajoService {
     public Mono<List<OrdentrabajoModel>> listaordentrabajos() {
         return Mono.fromCallable(() -> this.repo.listaordentrabajos());
     }
+    public Mono<List<OrdentrabajoModel>> obtenerordentrabajo_historial(String idordentrabajo) {
+        return Mono.fromCallable(() -> this.repo.obtenerordentrabajo_historial(idordentrabajo));
+    }
 }

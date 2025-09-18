@@ -48,6 +48,20 @@ public class OrdentrabajoRepository extends IConfigGeneric implements IOrdentrab
             throw new RepositorioException("error en listado: "+ex.getMessage());
         }
     }
+    @Override
+    public List<OrdentrabajoModel> obtenerordentrabajo_historial(String idordentrabajo) {
+        try {
+            //SELECT * FROM bitacora_servicio WHERE id_cliente = ?
+            String query = "SELECT * FROM historial_orden WHERE idordentrabajo = ?";
+            return this.jTemplate().query(query,
+                    new BeanPropertyRowMapper<OrdentrabajoModel>(OrdentrabajoModel.class),
+                    idordentrabajo
+            );
+        } catch (Exception ex) {
+
+            throw new RepositorioException("error en listado: "+ex.getMessage());
+        }
+    }
 
     @Override
     public List<OrdentrabajoModel> listaordentrabajos() {

@@ -10,4 +10,5 @@ public interface IOrdentrabajoRepo {
     responseModel registrarordentrabajo(Integer op, OrdentrabajoModel obj);
     OrdentrabajoModel obtenerordentrabajo(String idordentrabajo);
     List<OrdentrabajoModel> listaordentrabajos();
+    List<OrdentrabajoModel> obtenerordentrabajo_historial(String idordentrabajo);
 }

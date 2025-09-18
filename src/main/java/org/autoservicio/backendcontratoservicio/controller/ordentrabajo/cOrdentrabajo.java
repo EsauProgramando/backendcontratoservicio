@@ -53,4 +53,14 @@ public class cOrdentrabajo {
                 .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
                 .onErrorResume(GenericoException::error);
     }
+    @GetMapping("/buscar-historial/{idordentrabajo}")
+    public Mono<ResponseEntity<genericModel<List<OrdentrabajoModel>>>> obtenerordentrabajo_historial(
+            @PathVariable String idordentrabajo
+    ) {
+        return this.service.obtenerordentrabajo_historial(idordentrabajo)
+                .flatMap(GenericoException::success)
+                .doOnSuccess(response -> log.info("Operación exitosa"))
+                .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
+                .onErrorResume(GenericoException::error);
+    }
 }

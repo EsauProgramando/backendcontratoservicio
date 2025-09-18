@@ -8,5 +8,5 @@ package org.autoservicio.backendcontratoservicio.model.ordentrabajo;
 public class OrdentrabajoModel {
     private String idordentrabajo,fechareg,fechaorden,creador,estado,motivo,id_tecnico;
     private Integer id_cliente,id_tipo;
-    private String nombre_completo,servicio,direccion,tipo,tecnico;
+    private String nombre_completo,servicio,direccion,tipo,tecnico,path_imagen,observacion;
 }
