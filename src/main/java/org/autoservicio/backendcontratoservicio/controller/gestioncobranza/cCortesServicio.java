@@ -30,6 +30,7 @@ public class cCortesServicio {
     private SParamae service_paramae;
     @Autowired
     private GoogleDriveService googleDriveService;
+
     @PostMapping("/registrar/{op}")
     public @ResponseBody Mono<ResponseEntity<genericModel<responseModel>>> registrarcorteservicio(
             @PathVariable Integer op,
@@ -41,6 +42,7 @@ public class cCortesServicio {
                 .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
                 .onErrorResume(GenericoException::error);
     }
+
     @PostMapping("/buscar_pendiente_cortes")
     public @ResponseBody Mono<ResponseEntity<genericModel<List<ClienteCortesPentientesRequest>>>> obtener_cortes_pendientes_filtro(
             @RequestBody CortesfiltroEnvio ob
