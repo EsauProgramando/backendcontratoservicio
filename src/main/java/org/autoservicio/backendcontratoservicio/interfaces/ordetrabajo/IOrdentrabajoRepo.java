@@ -11,4 +11,5 @@ public interface IOrdentrabajoRepo {
     OrdentrabajoModel obtenerordentrabajo(String idordentrabajo);
     List<OrdentrabajoModel> listaordentrabajos();
     List<OrdentrabajoModel> obtenerordentrabajo_historial(String idordentrabajo);
+    List<OrdentrabajoModel> obtener_x_estado_tecnico(String estado, Integer idtecnico);
 }
