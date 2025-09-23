@@ -6,6 +6,7 @@ package org.autoservicio.backendcontratoservicio.response;
 @lombok.Builder
 public class ServicioContratadoRequest {
     private Integer id_contrato, id_cliente;
+    private String codigo_factura;
     private String cliente,fecha_contrato,observaciones,
              tipo_servicio,plan,velocidad;
     private Double precio_mensual;

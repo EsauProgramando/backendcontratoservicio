@@ -90,6 +90,19 @@ public class ContratosRepository extends IConfigGeneric implements IContratosRep
             throw new RepositorioException("Error al generar facturas del contrato: " + ex.getMessage());
         }
     }
+    @Override
+    public List<ServicioContratadoRequest> buscar_servicio_x_codigo_factura(String codigo_factura) {
+        String query = "CALL buscar_servicio_x_codigo_factura(?)";
+        try {
+            return this.jTemplate().query(
+                    query,
+                    new BeanPropertyRowMapper<>(ServicioContratadoRequest.class),
+                    codigo_factura
+            );
+        } catch (Exception ex) {
+            throw new RepositorioException("Error al ejecutar buscar_servicio_pornrocontrato: " + ex.getMessage());
+        }
+    }
 
 
 }
