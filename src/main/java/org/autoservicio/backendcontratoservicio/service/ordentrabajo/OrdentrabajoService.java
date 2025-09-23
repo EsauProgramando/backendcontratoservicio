@@ -26,4 +26,7 @@ public class OrdentrabajoService {
     public Mono<List<OrdentrabajoModel>> obtenerordentrabajo_historial(String idordentrabajo) {
         return Mono.fromCallable(() -> this.repo.obtenerordentrabajo_historial(idordentrabajo));
     }
+    public Mono<List<OrdentrabajoModel>> obtener_x_estado_tecnico(String estado,Integer idtecnico) {
+        return Mono.fromCallable(() -> this.repo.obtener_x_estado_tecnico(estado,idtecnico));
+    }
 }
