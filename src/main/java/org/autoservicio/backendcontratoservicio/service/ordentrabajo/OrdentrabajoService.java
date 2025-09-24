@@ -2,6 +2,7 @@ package org.autoservicio.backendcontratoservicio.service.ordentrabajo;
 
 import org.autoservicio.backendcontratoservicio.config.responseModel;
 import org.autoservicio.backendcontratoservicio.model.mantenimientos.TecnicoModel;
+import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentecnicoModel;
 import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentrabajoModel;
 import org.autoservicio.backendcontratoservicio.repository.ordentrabajo.OrdentrabajoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,10 @@ public class OrdentrabajoService {
     public Mono<List<OrdentrabajoModel>> obtenerordentrabajo_historial(String idordentrabajo) {
         return Mono.fromCallable(() -> this.repo.obtenerordentrabajo_historial(idordentrabajo));
     }
-    public Mono<List<OrdentrabajoModel>> obtener_x_estado_tecnico(String estado,Integer idtecnico) {
+    public Mono<List<OrdentrabajoModel>> obtener_x_estado_tecnico(String estado,String idtecnico) {
         return Mono.fromCallable(() -> this.repo.obtener_x_estado_tecnico(estado,idtecnico));
+    }
+    public Mono<List<OrdentecnicoModel>> obtener_reporte_x_estado_tecnico(String estado, String idtecnico) {
+        return Mono.fromCallable(() -> this.repo.obtener_reporte_x_estado_tecnico(estado,idtecnico));
     }
 }

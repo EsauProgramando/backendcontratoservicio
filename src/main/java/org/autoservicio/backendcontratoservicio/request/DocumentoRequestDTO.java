@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DocumentoRequestDTO {
 
-    private Integer idContrato;
+    private String codigoFactura;
     private String tipoComprobante; // Ej: '01', '03'
     private String tipoDocumentoCliente; // Ej: '1', '6'
     private String numeroDocumentoCliente;

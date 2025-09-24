@@ -13,4 +13,5 @@ public interface IContratosRepo {
     List<ServicioContratadoRequest> buscar_servicio_pornrocontrato(Integer id_contrato );
     responseModel registrarcontrato(Integer op, ContratosModel obj);
     responseModel generar_facturas_contrato(Integer id_contrato, Integer id_cliente);
+    List<ServicioContratadoRequest> buscar_servicio_x_codigo_factura(String codigo_factura );
 }

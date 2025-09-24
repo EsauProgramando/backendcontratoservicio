@@ -60,7 +60,7 @@ public class DocumentosService {
 
     @Transactional
     public documentoModel crearDocumento(DocumentoRequestDTO dto) {
-        Optional<documentoModel> existenteOpt = documentoRepository.findByIdContrato(dto.getIdContrato());
+        Optional<documentoModel> existenteOpt = documentoRepository.findByCodigoFactura(dto.getCodigoFactura());
 
         if (existenteOpt.isPresent()) {
             documentoModel existente = existenteOpt.get();
@@ -102,6 +102,7 @@ public class DocumentosService {
         String correlativoStr = String.format("%04d", secuencia.getCorrelativoActual());
 
         documentoModel nuevo = documentoModel.builder()
+                .codigoFactura(dto.getCodigoFactura())
                 .tipoComprobante(dto.getTipoComprobante())
                 .tipoDocumentoCliente(dto.getTipoDocumentoCliente())
                 .numeroDocumentoCliente(dto.getNumeroDocumentoCliente())
@@ -258,14 +259,14 @@ public class DocumentosService {
         return outputPath;
     }
 
-    public String generarFactura(Integer idContrato) throws Exception {
+    public String generarFactura(String codigo_factura) throws Exception {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        List<ServicioContratadoRequest> pedido = contratoRepository.buscar_servicio_pornrocontrato(idContrato);
+        List<ServicioContratadoRequest> pedido = contratoRepository.buscar_servicio_x_codigo_factura(codigo_factura);
 
         if(pedido.isEmpty()) {
-            throw new RuntimeException("No se encontró el detalle del contrato con ID: "+idContrato );
+            throw new RuntimeException("No se encontró el detalle del contrato con ID: "+codigo_factura );
         }
 
         List<Map<String, Object>> dataList = new ArrayList<>();
@@ -280,7 +281,7 @@ public class DocumentosService {
             System.out.println("SUMA: " + suma);
         }
         Double igv = suma * 0.18;
-        documentoModel documento = documentoRepository.findByIdContrato(idContrato)
+        documentoModel documento = documentoRepository.findByCodigoFactura(codigo_factura)
                 .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
         // Validar que sea una factura (debe tener RUC = "6")
         if(documento.getTipoDocumentoCliente() == null || !documento.getTipoDocumentoCliente().equals("6")) {
@@ -310,7 +311,7 @@ public class DocumentosService {
         row.put("comp_descripcion_moneda", "SOLES");
         row.put("comp_simbolo_moneda", "S/");
         row.put("comp_codigo_hash", "ABC123HASH456");
-        String qr = "20607546364|"+documento.getTipoComprobante()+"|"+documento.getSerie()+"|"+idContrato+"|"+igv+"|"+suma+"|"+LocalDateTime.now().format(formatter)+"|6|"+documento.getNumeroDocumentoCliente();
+        String qr = "20607546364|"+documento.getTipoComprobante()+"|"+documento.getSerie()+"|"+codigo_factura+"|"+igv+"|"+suma+"|"+LocalDateTime.now().format(formatter)+"|6|"+documento.getNumeroDocumentoCliente();
         row.put("comp_cadena_qr", qr);
         System.out.println("Cadena QR: [" + qr + "]");
         row.put("comp_condicion_pago", "Contado");
@@ -331,11 +332,11 @@ public class DocumentosService {
 
             if (i > 0) row = new HashMap<>(row); // Clonar para múltiples filas
 
-            row.put("itco_codigo_interno", pp.getId_contrato());
+             row.put("itco_codigo_interno", pp.getCodigo_factura());
             row.put("itco_cantidad", 1);
             row.put("itco_unidad_medida", "UND");
             row.put("itco_descripcion_completa",
-                    pp.getId_contrato() + " " + pp.getId_cliente());
+                    pp.getNotas() + " " + pp.getObservaciones());
             row.put("itco_precio_unitario", pp.getPrecio_mensual());
 
             dataList.add(row);
@@ -376,14 +377,14 @@ public class DocumentosService {
     }
 
 
-    public String generarFacturaManual(Integer idContrato, String ruc, String razonSocial) throws Exception {
+    public String generarFacturaManual(String codigo_factura, String ruc, String razonSocial) throws Exception {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        List<ServicioContratadoRequest> pedido = contratoRepository.buscar_servicio_pornrocontrato(idContrato);
+        List<ServicioContratadoRequest> pedido = contratoRepository.buscar_servicio_x_codigo_factura(codigo_factura);
 
         if(pedido.isEmpty()) {
-            throw new RuntimeException("No se encontró el detalle del contrato con ID: "+idContrato );
+            throw new RuntimeException("No se encontró el detalle del contrato con ID: "+codigo_factura );
         }
 
         List<Map<String, Object>> dataList = new ArrayList<>();
@@ -395,7 +396,7 @@ public class DocumentosService {
             System.out.println("SUMA: " + suma);
         }
         Double igv = suma * 0.18;
-        documentoModel documento = documentoRepository.findByIdContrato(idContrato)
+        documentoModel documento = documentoRepository.findByCodigoFactura(codigo_factura)
                 .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
 
         Map<String, Object> row = new HashMap<>();
@@ -420,7 +421,7 @@ public class DocumentosService {
         row.put("comp_descripcion_moneda", "SOLES");
         row.put("comp_simbolo_moneda", "S/");
         row.put("comp_codigo_hash", "ABC123HASH456");
-        String qr = "20607546364|"+documento.getTipoComprobante()+"|"+documento.getSerie()+"|"+idContrato+"|"+ String.format("%.2f", igv)+"|"+suma+"|"+LocalDateTime.now().format(formatter)+"|6|"+ruc;
+        String qr = "20607546364|"+documento.getTipoComprobante()+"|"+documento.getSerie()+"|"+codigo_factura+"|"+ String.format("%.2f", igv)+"|"+suma+"|"+LocalDateTime.now().format(formatter)+"|6|"+ruc;
         row.put("comp_cadena_qr", qr);
         System.out.println("Cadena QR: [" + qr + "]");
         row.put("comp_condicion_pago", "Contado");
@@ -441,11 +442,11 @@ public class DocumentosService {
 
             if (i > 0) row = new HashMap<>(row); // Clonar para múltiples filas
 
-            row.put("itco_codigo_interno", pp.getId_contrato());
+            row.put("itco_codigo_interno", pp.getCodigo_factura());
             row.put("itco_cantidad", 1);
             row.put("itco_unidad_medida", "UND");
             row.put("itco_descripcion_completa",
-                    pp.getId_contrato() + " " + pp.getId_cliente());
+                    pp.getNotas() + " " + pp.getObservaciones());
             row.put("itco_precio_unitario", pp.getPrecio_mensual());
 
             dataList.add(row);
@@ -486,14 +487,14 @@ public class DocumentosService {
     }
 
 
-    public String generarBoleta(Integer idContrato) throws Exception {
+    public String generarBoleta(String codigo_factura) throws Exception {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        List<ServicioContratadoRequest> pedido = contratoRepository.buscar_servicio_pornrocontrato(idContrato);
+        List<ServicioContratadoRequest> pedido = contratoRepository.buscar_servicio_x_codigo_factura(codigo_factura);
 
         if(pedido.isEmpty()) {
-            throw new RuntimeException("No se encontró el detalle del contrato con ID: "+idContrato );
+            throw new RuntimeException("No se encontró el detalle del contrato con ID: "+codigo_factura );
         }
 
         List<Map<String, Object>> dataList = new ArrayList<>();
@@ -508,7 +509,7 @@ public class DocumentosService {
             System.out.println("SUMA: " + suma);
         }
         Double igv = suma * 0.18;
-        documentoModel documento = documentoRepository.findByIdContrato(idContrato)
+        documentoModel documento = documentoRepository.findByCodigoFactura(codigo_factura)
                 .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
 
         if(documento.getTipoDocumentoCliente() == null || !documento.getTipoDocumentoCliente().equals("1")) {
@@ -535,7 +536,7 @@ public class DocumentosService {
         row.put("comp_fecha_emicion", Timestamp.valueOf(LocalDateTime.now()));
         row.put("comp_descripcion_moneda", "SOLES");
         row.put("comp_simbolo_moneda", "S/");
-        String qr = "20607546364|"+documento.getTipoComprobante()+"|"+documento.getSerie()+"|"+idContrato+"|"+igv+"|"+suma+"|"+LocalDateTime.now().format(formatter)+"|6|"+documento.getNumeroDocumentoCliente();
+        String qr = "20607546364|"+documento.getTipoComprobante()+"|"+documento.getSerie()+"|"+codigo_factura+"|"+igv+"|"+suma+"|"+LocalDateTime.now().format(formatter)+"|6|"+documento.getNumeroDocumentoCliente();
         row.put("comp_cadena_qr", qr);
         System.out.println("Cadena QR: [" + qr + "]");
         row.put("comp_condicion_pago", "Contado");
@@ -556,11 +557,11 @@ public class DocumentosService {
 
             if (i > 0) row = new HashMap<>(row); // Clonar para múltiples filas
 
-            row.put("itco_codigo_interno", pp.getId_contrato());
+             row.put("itco_codigo_interno", pp.getCodigo_factura());
             row.put("itco_cantidad", 1);
             row.put("itco_unidad_medida", "UND");
             row.put("itco_descripcion_completa",
-                    pp.getId_contrato() + " " + pp.getId_cliente());
+                    pp.getNotas() + " " + pp.getObservaciones());
             row.put("itco_precio_unitario", pp.getPrecio_mensual());
 
             dataList.add(row);
@@ -600,14 +601,14 @@ public class DocumentosService {
         return driveLink;
     }
 
-    public String generarBoletaManual(Integer idContrato, String dni, String nombre) throws Exception {
+    public String generarBoletaManual(String codigo_factura, String dni, String nombre) throws Exception {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        List<ServicioContratadoRequest> pedido = contratoRepository.buscar_servicio_pornrocontrato(idContrato);
+        List<ServicioContratadoRequest> pedido = contratoRepository.buscar_servicio_x_codigo_factura(codigo_factura);
 
         if(pedido.isEmpty()) {
-            throw new RuntimeException("No se encontró el detalle del contrato con ID: "+idContrato );
+            throw new RuntimeException("No se encontró el detalle del contrato con ID: "+codigo_factura );
         }
 
         List<Map<String, Object>> dataList = new ArrayList<>();
@@ -620,7 +621,7 @@ public class DocumentosService {
         }
         Double igv = suma * 0.18;
 
-        documentoModel documento = documentoRepository.findByIdContrato(idContrato)
+        documentoModel documento = documentoRepository.findByCodigoFactura(codigo_factura)
                 .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
 
         if(documento.getTipoDocumentoCliente() == null || !documento.getTipoDocumentoCliente().equals("1")) {
@@ -647,7 +648,7 @@ public class DocumentosService {
         row.put("comp_fecha_emicion", Timestamp.valueOf(LocalDateTime.now()));
         row.put("comp_descripcion_moneda", "SOLES");
         row.put("comp_simbolo_moneda", "S/");
-        String qr = "20607546364|"+documento.getTipoComprobante()+"|"+documento.getSerie()+"|"+idContrato+"|"+igv+"|"+suma+"|"+LocalDateTime.now().format(formatter)+"|1|"+dni;
+        String qr = "20607546364|"+documento.getTipoComprobante()+"|"+documento.getSerie()+"|"+codigo_factura+"|"+igv+"|"+suma+"|"+LocalDateTime.now().format(formatter)+"|1|"+dni;
         row.put("comp_cadena_qr", qr);
         System.out.println("Cadena QR: [" + qr + "]");
         row.put("comp_condicion_pago", "Contado");
@@ -668,11 +669,11 @@ public class DocumentosService {
 
             if (i > 0) row = new HashMap<>(row); // Clonar para múltiples filas
 
-            row.put("itco_codigo_interno", pp.getId_contrato());
+             row.put("itco_codigo_interno", pp.getCodigo_factura());
             row.put("itco_cantidad", 1);
             row.put("itco_unidad_medida", "UND");
             row.put("itco_descripcion_completa",
-                    pp.getId_contrato() + " " + pp.getId_cliente());
+                    pp.getNotas() + " " + pp.getObservaciones());
             row.put("itco_precio_unitario", pp.getPrecio_mensual());
 
             dataList.add(row);
