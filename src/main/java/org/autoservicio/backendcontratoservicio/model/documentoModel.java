@@ -20,8 +20,8 @@ public class documentoModel {
     @Column(name = "id_documento")
     private Long idDocumento;
 
-    @Column(name = "id_contrato", nullable = true, length = 20)
-    private Integer idContrato;
+    @Column(name = "codigo_factura", nullable = false, length = 20)
+    private String codigoFactura;
 
     @Column(name = "tipo_comprobante", length = 2)
     private String tipoComprobante; // '01', '03', etc.

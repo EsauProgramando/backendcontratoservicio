@@ -102,7 +102,6 @@ public class DocumentosService {
         String correlativoStr = String.format("%04d", secuencia.getCorrelativoActual());
 
         documentoModel nuevo = documentoModel.builder()
-                .idContrato(dto.getIdContrato())
                 .tipoComprobante(dto.getTipoComprobante())
                 .tipoDocumentoCliente(dto.getTipoDocumentoCliente())
                 .numeroDocumentoCliente(dto.getNumeroDocumentoCliente())
