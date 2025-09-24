@@ -38,7 +38,7 @@ public class DocumentoJobSerivce {
 
         for (documentoModel doc : pendientes) {
             try {
-                List<ServicioContratadoRequest> productos = contratoRepository.buscar_servicio_pornrocontrato(doc.getIdContrato());
+                List<ServicioContratadoRequest> productos = contratoRepository.buscar_servicio_x_codigo_factura(doc.getCodigoFactura());
                 if (productos.isEmpty()) continue;
 
 

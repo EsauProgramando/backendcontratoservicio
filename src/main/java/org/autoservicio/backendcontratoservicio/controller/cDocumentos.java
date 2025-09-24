@@ -52,11 +52,11 @@ public class cDocumentos {
 //        }
 //    }
 
-    @GetMapping("/factura/{idContrato}")
-    public ResponseEntity<ResponseValueDTO<String>> generarFactura(@PathVariable Integer idContrato) {
+    @GetMapping("/factura/{codigo_factura}")
+    public ResponseEntity<ResponseValueDTO<String>> generarFactura(@PathVariable String codigo_factura) {
         try {
             // Llamar al service para generar el PDF (ya guarda en disco)
-            String url = documentoService.generarFactura(idContrato);
+            String url = documentoService.generarFactura(codigo_factura);
 
             ResponseValueDTO<String> response = new ResponseValueDTO<>(
                     1,
@@ -79,7 +79,7 @@ public class cDocumentos {
     }
 
     @GetMapping("/factura-manual")
-    public ResponseEntity<ResponseValueDTO<String>> generarFacturaManual(@RequestParam Integer idContrato, @RequestParam String ruc, @RequestParam String razonSocial) {
+    public ResponseEntity<ResponseValueDTO<String>> generarFacturaManual(@RequestParam String codigo_factura, @RequestParam String ruc, @RequestParam String razonSocial) {
         try {
 
             razonSocial = razonSocial.toUpperCase();
@@ -88,7 +88,7 @@ public class cDocumentos {
                 throw new RuntimeException("El RUC no tiene un formato válido.");
             }
 
-            String url = documentoService.generarFacturaManual(idContrato, ruc, razonSocial);
+            String url = documentoService.generarFacturaManual(codigo_factura, ruc, razonSocial);
 
             ResponseValueDTO<String> response = new ResponseValueDTO<>(
                     1,
@@ -110,10 +110,10 @@ public class cDocumentos {
         }
     }
 
-    @GetMapping("/boleta/{idContrato}")
-    public ResponseEntity<ResponseValueDTO<String>> generarBoleta(@PathVariable Integer idContrato) {
+    @GetMapping("/boleta/{codigo_factura}")
+    public ResponseEntity<ResponseValueDTO<String>> generarBoleta(@PathVariable String codigo_factura) {
         try {
-            String url = documentoService.generarBoleta(idContrato);
+            String url = documentoService.generarBoleta(codigo_factura);
 
             ResponseValueDTO<String> response = new ResponseValueDTO<>(
                     1,
@@ -136,7 +136,7 @@ public class cDocumentos {
     }
 
     @GetMapping("/boleta-manual")
-    public ResponseEntity<ResponseValueDTO<String>> generarBoletaManual(@RequestParam Integer idContrato, @RequestParam String dni, @RequestParam String nombre) {
+    public ResponseEntity<ResponseValueDTO<String>> generarBoletaManual(@RequestParam String codigo_factura, @RequestParam String dni, @RequestParam String nombre) {
         try {
 
             nombre = nombre.toUpperCase();
@@ -145,7 +145,7 @@ public class cDocumentos {
                 throw new RuntimeException("El DNI no tiene un formato válido.");
             }
 
-            String url = documentoService.generarBoletaManual(idContrato, dni, nombre);
+            String url = documentoService.generarBoletaManual(codigo_factura, dni, nombre);
 
             ResponseValueDTO<String> response = new ResponseValueDTO<>(
                     1,
