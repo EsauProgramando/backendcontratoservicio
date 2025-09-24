@@ -11,8 +11,7 @@ import java.util.List;
 public interface ISeguimientoMorosidad {
 
     List<Clientes_morosidad_ext> Clientes_morosidad_extModel(Clientes_morosidad_extModel enviodatos);
-
-    List<Sp_kpis_mora_total> kpis_mora_total(Integer solo_con_saldo);
+    Sp_kpis_mora_total kpis_mora_total(Integer solo_con_saldo);
 
     List<Detalle_facturas_mora> detalle_facturas_mora(Detalle_facturas_moraModel enviodatos);
 }

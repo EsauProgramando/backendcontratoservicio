@@ -16,5 +16,7 @@ public class Clientes_morosidad_ext {
     private Integer dias_en_mora;
     private String  ultimo_pago,estado;
     private Integer facturas_en_mora;
+    private String telefono;
+    private String email;
 
 }
