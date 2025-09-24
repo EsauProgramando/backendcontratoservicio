@@ -8,6 +8,7 @@ import org.autoservicio.backendcontratoservicio.excepciones.GenericoException;
 import org.autoservicio.backendcontratoservicio.model.mantenimientos.TecnicoModel;
 import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentecnicoModel;
 import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentrabajoModel;
+import org.autoservicio.backendcontratoservicio.request.ListaOrdenRequest;
 import org.autoservicio.backendcontratoservicio.service.mantenimientos.TecnicoService;
 import org.autoservicio.backendcontratoservicio.service.ordentrabajo.OrdentrabajoService;
 import org.springframework.http.ResponseEntity;
@@ -45,10 +46,11 @@ public class cOrdentrabajo {
                 .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
                 .onErrorResume(GenericoException::error);
     }
-    @GetMapping("/listado")
+    @PostMapping("/listado")
     public Mono<ResponseEntity<genericModel<List<OrdentrabajoModel>>>> obtenertecnico(
+            @RequestBody ListaOrdenRequest request
     ) {
-        return this.service.listaordentrabajos()
+        return this.service.listaordentrabajos(request)
                 .flatMap(GenericoException::success)
                 .doOnSuccess(response -> log.info("Operación exitosa"))
                 .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
