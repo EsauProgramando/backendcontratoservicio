@@ -20,7 +20,7 @@ public class documentoModel {
     @Column(name = "id_documento")
     private Long idDocumento;
 
-    @Column(name = "id_contrato", nullable = false, length = 20)
+    @Column(name = "id_contrato", nullable = true, length = 20)
     private Integer idContrato;
 
     @Column(name = "tipo_comprobante", length = 2)
