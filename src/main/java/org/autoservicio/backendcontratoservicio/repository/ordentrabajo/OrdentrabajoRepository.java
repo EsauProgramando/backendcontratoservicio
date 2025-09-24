@@ -6,6 +6,7 @@ import org.autoservicio.backendcontratoservicio.config.responseModel;
 import org.autoservicio.backendcontratoservicio.excepciones.RepositorioException;
 import org.autoservicio.backendcontratoservicio.interfaces.ordetrabajo.IOrdentrabajoRepo;
 import org.autoservicio.backendcontratoservicio.model.mantenimientos.TecnicoModel;
+import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentecnicoModel;
 import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentrabajoModel;
 import org.autoservicio.backendcontratoservicio.response.CortesServicioRequest;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -77,12 +78,25 @@ public class OrdentrabajoRepository extends IConfigGeneric implements IOrdentrab
         }
     }
     @Override
-    public List<OrdentrabajoModel> obtener_x_estado_tecnico(String estado,Integer idtecnico) {
+    public List<OrdentrabajoModel> obtener_x_estado_tecnico(String estado,String idtecnico) {
 
         try {
             String query = "CALL sp_buscar_orden_trabajo_x_estado_tecnico(?,?)";
             return this.jTemplate().query(query,
                     new BeanPropertyRowMapper<OrdentrabajoModel>(OrdentrabajoModel.class),estado,idtecnico
+            );
+        } catch (Exception ex) {
+
+            throw new RepositorioException("error en listado por fecha: "+ex.getMessage());
+        }
+    }
+    @Override
+    public List<OrdentecnicoModel> obtener_reporte_x_estado_tecnico(String estado, String idtecnico) {
+
+        try {
+            String query = "CALL sp_obtener_reporte_ordenes_x_tecnicos(?,?)";
+            return this.jTemplate().query(query,
+                    new BeanPropertyRowMapper<OrdentecnicoModel>(OrdentecnicoModel.class),idtecnico,estado
             );
         } catch (Exception ex) {
 
