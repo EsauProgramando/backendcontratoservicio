@@ -8,6 +8,7 @@ import org.autoservicio.backendcontratoservicio.interfaces.ordetrabajo.IOrdentra
 import org.autoservicio.backendcontratoservicio.model.mantenimientos.TecnicoModel;
 import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentecnicoModel;
 import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentrabajoModel;
+import org.autoservicio.backendcontratoservicio.request.ListaOrdenRequest;
 import org.autoservicio.backendcontratoservicio.response.CortesServicioRequest;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
@@ -65,16 +66,31 @@ public class OrdentrabajoRepository extends IConfigGeneric implements IOrdentrab
     }
 
     @Override
-    public List<OrdentrabajoModel> listaordentrabajos() {
+    public List<OrdentrabajoModel> listaordentrabajos(ListaOrdenRequest request) {
 
+//        try {
+//            String query = "CALL sp_buscar_orden_trabajo()";
+//            return this.jTemplate().query(query,
+//                    new BeanPropertyRowMapper<OrdentrabajoModel>(OrdentrabajoModel.class)
+//            );
+//        } catch (Exception ex) {
+//
+//            throw new RepositorioException("error en listado: "+ex.getMessage());
+//        }
         try {
-            String query = "CALL sp_buscar_orden_trabajo()";
-            return this.jTemplate().query(query,
-                    new BeanPropertyRowMapper<OrdentrabajoModel>(OrdentrabajoModel.class)
+            // Convertir a JSON plano
+            ObjectMapper mapper = new ObjectMapper();
+            String ordentrabajo = mapper.writeValueAsString(request);
+
+            String sql = "CALL sp_buscar_orden_trabajo(?)";
+
+            return this.jTemplate().query(
+                    sql,
+                    new BeanPropertyRowMapper<>(OrdentrabajoModel.class),
+                    ordentrabajo
             );
         } catch (Exception ex) {
-
-            throw new RepositorioException("error en listado: "+ex.getMessage());
+            throw new RepositorioException("Error al registrar kardex: " + ex.getMessage());
         }
     }
     @Override
