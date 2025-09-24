@@ -6,6 +6,7 @@ import org.autoservicio.backendcontratoservicio.config.genericModel;
 import org.autoservicio.backendcontratoservicio.config.responseModel;
 import org.autoservicio.backendcontratoservicio.excepciones.GenericoException;
 import org.autoservicio.backendcontratoservicio.model.mantenimientos.TecnicoModel;
+import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentecnicoModel;
 import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentrabajoModel;
 import org.autoservicio.backendcontratoservicio.service.mantenimientos.TecnicoService;
 import org.autoservicio.backendcontratoservicio.service.ordentrabajo.OrdentrabajoService;
@@ -66,9 +67,20 @@ public class cOrdentrabajo {
     @GetMapping("/buscar-x-estado-tecnico/{estado}/{idtecnico}")
     public Mono<ResponseEntity<genericModel<List<OrdentrabajoModel>>>> obtener_x_estado_tecnico(
             @PathVariable String estado,
-            @PathVariable Integer idtecnico
+            @PathVariable String idtecnico
     ) {
         return this.service.obtener_x_estado_tecnico(estado,idtecnico)
+                .flatMap(GenericoException::success)
+                .doOnSuccess(response -> log.info("Operación exitosa"))
+                .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
+                .onErrorResume(GenericoException::error);
+    }
+    @GetMapping("/buscar-reporte-x-estado-tecnico/{estado}/{idtecnico}")
+    public Mono<ResponseEntity<genericModel<List<OrdentecnicoModel>>>> obtener_reporte_x_estado_tecnico(
+            @PathVariable String estado,
+            @PathVariable String idtecnico
+    ) {
+        return this.service.obtener_reporte_x_estado_tecnico(estado,idtecnico)
                 .flatMap(GenericoException::success)
                 .doOnSuccess(response -> log.info("Operación exitosa"))
                 .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
