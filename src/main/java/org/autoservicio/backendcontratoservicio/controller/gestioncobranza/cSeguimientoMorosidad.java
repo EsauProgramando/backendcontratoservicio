@@ -35,7 +35,7 @@ public class cSeguimientoMorosidad {
     }
 
     @GetMapping("/sp_kpis_mora_total/{solo_con_saldo}")
-    public @ResponseBody Mono<ResponseEntity<genericModel<List<Sp_kpis_mora_total>>>> kpis_mora_total
+    public @ResponseBody Mono<ResponseEntity<genericModel<Sp_kpis_mora_total>>> kpis_mora_total
             (@PathVariable Integer solo_con_saldo) {
         return this.service.kpis_mora_total(solo_con_saldo)
                 .flatMap(GenericoException::success)

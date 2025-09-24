@@ -8,7 +8,7 @@ package org.autoservicio.backendcontratoservicio.response;
 @lombok.Builder
 public class Clientes_morosidad_ext {
     private Integer id_cliente;
-    private String nombres,apellidos;
+    private String nombre_completo;
     private Integer tipodocident;
     private String nrodocident,desctipo;
     private Integer id_contrato;
@@ -16,5 +16,7 @@ public class Clientes_morosidad_ext {
     private Integer dias_en_mora;
     private String  ultimo_pago,estado;
     private Integer facturas_en_mora;
+    private String telefono;
+    private String email;
 
 }

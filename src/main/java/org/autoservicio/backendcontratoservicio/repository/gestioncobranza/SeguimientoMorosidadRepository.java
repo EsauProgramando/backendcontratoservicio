@@ -37,13 +37,12 @@ public class SeguimientoMorosidadRepository  extends IConfigGeneric implements I
     }
 
     @Override
-    public List<Sp_kpis_mora_total> kpis_mora_total(Integer solo_con_saldo) {
-        //validar si viene vacio ponerle null
-
+    public Sp_kpis_mora_total kpis_mora_total(Integer solo_con_saldo) {
         try {
             String query = "CALL sp_kpis_mora_total(?)";
-            return this.jTemplate().query(query,
-                    new BeanPropertyRowMapper<Sp_kpis_mora_total>(Sp_kpis_mora_total.class),
+            return this.jTemplate().queryForObject(
+                    query,
+                    new BeanPropertyRowMapper<>(Sp_kpis_mora_total.class),
                     solo_con_saldo
             );
         } catch (Exception ex) {
@@ -51,6 +50,7 @@ public class SeguimientoMorosidadRepository  extends IConfigGeneric implements I
             throw new RepositorioException("error en listado: "+ex.getMessage());
         }
     }
+
 
     @Override
     public List<Detalle_facturas_mora> detalle_facturas_mora(Detalle_facturas_moraModel enviodatos) {

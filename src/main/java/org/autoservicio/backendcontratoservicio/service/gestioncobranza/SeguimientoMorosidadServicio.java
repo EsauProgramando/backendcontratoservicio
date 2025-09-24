@@ -21,7 +21,7 @@ public class SeguimientoMorosidadServicio {
         return Mono.fromCallable(() -> this.repo.Clientes_morosidad_extModel(enviodatos));
     }
 
-    public Mono<List<Sp_kpis_mora_total>> kpis_mora_total(Integer solo_con_saldo) {
+    public Mono<Sp_kpis_mora_total> kpis_mora_total(Integer solo_con_saldo) {
         return Mono.fromCallable(() -> this.repo.kpis_mora_total(solo_con_saldo));
     }
 
