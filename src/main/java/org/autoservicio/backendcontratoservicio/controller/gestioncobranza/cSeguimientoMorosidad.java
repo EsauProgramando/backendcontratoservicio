@@ -8,6 +8,7 @@ import org.autoservicio.backendcontratoservicio.model.gestioncobranza.Clientes_m
 import org.autoservicio.backendcontratoservicio.model.gestioncobranza.Detalle_facturas_moraModel;
 import org.autoservicio.backendcontratoservicio.response.Clientes_morosidad_ext;
 import org.autoservicio.backendcontratoservicio.response.Detalle_facturas_mora;
+import org.autoservicio.backendcontratoservicio.response.Historico_mora_6mRequest;
 import org.autoservicio.backendcontratoservicio.response.Sp_kpis_mora_total;
 import org.autoservicio.backendcontratoservicio.service.gestioncobranza.SeguimientoMorosidadServicio;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +55,16 @@ public class cSeguimientoMorosidad {
                 .doOnSuccess(response -> log.info("Operación exitosa"))
                 .doOnError(error -> log.error("Error en Operación: {}", error.getMessage()))
                 .onErrorResume(GenericoException::error);
+    }
+
+    @GetMapping("/sp_historico_mora_6m")
+    public @ResponseBody Mono<ResponseEntity<genericModel<List<Historico_mora_6mRequest>>>> historico_mora_6mListado
+            () {
+        return this.service.historico_mora_6mListado()
+                .flatMap(GenericoException::success)
+                .doOnSuccess(response -> log.info("Operación exitosa"))
+                .doOnError(error -> log.error("Error en Operación: {}", error.getMessage()))
+                .onErrorResume(GenericoException::error);
+
     }
 }

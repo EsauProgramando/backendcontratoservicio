@@ -5,6 +5,7 @@ import org.autoservicio.backendcontratoservicio.model.gestioncobranza.Detalle_fa
 import org.autoservicio.backendcontratoservicio.repository.gestioncobranza.SeguimientoMorosidadRepository;
 import org.autoservicio.backendcontratoservicio.response.Clientes_morosidad_ext;
 import org.autoservicio.backendcontratoservicio.response.Detalle_facturas_mora;
+import org.autoservicio.backendcontratoservicio.response.Historico_mora_6mRequest;
 import org.autoservicio.backendcontratoservicio.response.Sp_kpis_mora_total;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,9 @@ public class SeguimientoMorosidadServicio {
 
     public Mono<List<Detalle_facturas_mora>> detalle_facturas_mora(Detalle_facturas_moraModel enviodatos) {
         return Mono.fromCallable(() -> this.repo.detalle_facturas_mora(enviodatos));
+    }
+
+    public Mono<List<Historico_mora_6mRequest>> historico_mora_6mListado() {
+        return Mono.fromCallable(() -> this.repo.historico_mora_6mListado());
     }
 }

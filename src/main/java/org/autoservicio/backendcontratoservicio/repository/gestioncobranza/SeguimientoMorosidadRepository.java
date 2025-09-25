@@ -7,6 +7,7 @@ import org.autoservicio.backendcontratoservicio.model.gestioncobranza.Clientes_m
 import org.autoservicio.backendcontratoservicio.model.gestioncobranza.Detalle_facturas_moraModel;
 import org.autoservicio.backendcontratoservicio.response.Clientes_morosidad_ext;
 import org.autoservicio.backendcontratoservicio.response.Detalle_facturas_mora;
+import org.autoservicio.backendcontratoservicio.response.Historico_mora_6mRequest;
 import org.autoservicio.backendcontratoservicio.response.Sp_kpis_mora_total;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
@@ -61,6 +62,19 @@ public class SeguimientoMorosidadRepository  extends IConfigGeneric implements I
             return this.jTemplate().query(query,
                     new BeanPropertyRowMapper<Detalle_facturas_mora>(Detalle_facturas_mora.class),
                     enviodatos.getId_cliente(), enviodatos.getId_contrato(), enviodatos.getSolo_con_saldo(), enviodatos.getEstado()
+            );
+        } catch (Exception ex) {
+
+            throw new RepositorioException("error en listado: "+ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<Historico_mora_6mRequest> historico_mora_6mListado() {
+        try {
+            String query = "CALL sp_historico_mora_6m()";
+            return this.jTemplate().query(query,
+                    new BeanPropertyRowMapper<Historico_mora_6mRequest>(Historico_mora_6mRequest.class)
             );
         } catch (Exception ex) {
 
