@@ -33,7 +33,7 @@ public class Plan_servicioRepository extends IConfigGeneric implements IPlan_ser
 
             String sql = "CALL usp_registrar_plan_servicio(?, ?)";
 
-            String mensaje = this.jTemplate().queryForObject(sql, String.class, op, plan_servicio);
+            String mensaje = this.jTemplate().queryForObject(sql, String.class, plan_servicio,op );
 
             return responseModel.builder()
                     .response(mensaje)
