@@ -33,7 +33,7 @@ public class VelocidadRepository  extends IConfigGeneric implements IVelocidadRe
 
             String sql = "CALL usp_registrar_velocidad_servicio(?, ?)";
 
-            String mensaje = this.jTemplate().queryForObject(sql, String.class, op, velocidad);
+            String mensaje = this.jTemplate().queryForObject(sql, String.class,velocidad, op );
 
             return responseModel.builder()
                     .response(mensaje)

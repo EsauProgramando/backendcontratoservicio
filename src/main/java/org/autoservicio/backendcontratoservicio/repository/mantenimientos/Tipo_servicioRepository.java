@@ -34,7 +34,7 @@ public class Tipo_servicioRepository extends IConfigGeneric  implements ITipo_se
 
             String sql = "CALL usp_registrar_tipo_servicio(?, ?)";
 
-            String mensaje = this.jTemplate().queryForObject(sql, String.class, op, tipo_servicio);
+            String mensaje = this.jTemplate().queryForObject(sql, String.class,tipo_servicio, op);
 
             return responseModel.builder()
                     .response(mensaje)
