@@ -38,6 +38,8 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
                         // ⚠️ Muy importante: permitir preflight (OPTIONS)
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -51,10 +53,13 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/v2/api-docs/**"
                         ).permitAll()
-                        .pathMatchers("/api/auth/**").permitAll()
+                        .pathMatchers("/api/auth/**", "/contrato_servicio/api/auth/**").permitAll()
+
 
                         // Endpoints protegidos
-                        .pathMatchers("/api/**").authenticated()
+                        .pathMatchers("/api/**", "/contrato_servicio/api/**").authenticated()
+                        // Endpoints protegidos
+                        .pathMatchers("/**","/contrato_servicio/**").authenticated()
 
                         // Cualquier otro endpoint
                         .anyExchange().authenticated()
