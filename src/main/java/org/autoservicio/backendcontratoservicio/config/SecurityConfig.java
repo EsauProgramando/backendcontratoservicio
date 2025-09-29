@@ -41,7 +41,6 @@ public class SecurityConfig {
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
-                        // ⚠️ Muy importante: permitir preflight (OPTIONS)
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Endpoints públicos
@@ -66,7 +65,7 @@ public class SecurityConfig {
                         .pathMatchers("/**","/contrato_servicio/**").authenticated()
 
                         // Cualquier otro endpoint
-                        .anyExchange().authenticated()
+//                        .anyExchange().authenticated()
                 )
                 .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
