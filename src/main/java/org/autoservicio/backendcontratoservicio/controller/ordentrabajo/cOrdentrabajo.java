@@ -88,12 +88,4 @@ public class cOrdentrabajo {
                 .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
                 .onErrorResume(GenericoException::error);
     }
-    @GetMapping("/listado-string")
-    public String listadostring() {
-        return ("listado string");
-    }
-    @GetMapping("/listado-web")
-    public Mono<String> obtenerweb() {
-        return Mono.just("listado web");
-    }
 }
