@@ -1,9 +1,11 @@
 package org.autoservicio.backendcontratoservicio.repository.gestionclientes;
 
 import org.autoservicio.backendcontratoservicio.config.IConfigGeneric;
+import org.autoservicio.backendcontratoservicio.config.responseModel;
 import org.autoservicio.backendcontratoservicio.excepciones.RepositorioException;
 import org.autoservicio.backendcontratoservicio.interfaces.gestionclientes.IFacturacion;
 import org.autoservicio.backendcontratoservicio.model.gestionclientes.Buscarpagosenlinea;
+import org.autoservicio.backendcontratoservicio.model.gestioncobranza.ActuatulizarFacturaModel;
 import org.autoservicio.backendcontratoservicio.model.gestioncobranza.CobranzaEnvio;
 import org.autoservicio.backendcontratoservicio.response.FacturacionRequest;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -60,6 +62,26 @@ public class FacturacionRepository extends IConfigGeneric implements IFacturacio
         } catch (Exception ex) {
 
             throw new RepositorioException("error en listado: "+ex.getMessage());
+        }
+    }
+
+    @Override
+    public responseModel actualizar_factura(ActuatulizarFacturaModel enviodatos) {
+        try {
+            //quiero actulizar nativamente
+            String sql = "UPDATE facturas SET ticket = ?,estado=?,fecha_pago=?,motivo_rechaso=?,observacion_vache=? " +
+                    "WHERE id_factura  = ? AND id_contrato  = ? AND id_cliente = ?";
+            int rowsAffected = this.jTemplate().update(sql, enviodatos.getTicket(), enviodatos.getEstado(), enviodatos.getFecha_pago(),
+                    enviodatos.getMotivo_rechaso(),enviodatos.getObservacion_vache(),enviodatos.getId_factura(),enviodatos.getId_contrato(),
+                    enviodatos.getId_cliente());
+            String mensaje = (rowsAffected > 0) ? "Observacion actualizada correctamente" : "No se encontro el registro para actualizar";
+            return responseModel.builder()
+                    .response(mensaje)
+                    .build();
+
+
+        } catch (Exception ex) {
+            throw new RepositorioException("Error al actualizar observacion de reapertura: " + ex.getMessage());
         }
     }
 }

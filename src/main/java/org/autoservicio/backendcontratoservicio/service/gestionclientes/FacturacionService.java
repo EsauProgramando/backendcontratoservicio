@@ -1,5 +1,7 @@
 package org.autoservicio.backendcontratoservicio.service.gestionclientes;
+import org.autoservicio.backendcontratoservicio.config.responseModel;
 import org.autoservicio.backendcontratoservicio.model.gestionclientes.Buscarpagosenlinea;
+import org.autoservicio.backendcontratoservicio.model.gestioncobranza.ActuatulizarFacturaModel;
 import org.autoservicio.backendcontratoservicio.model.gestioncobranza.CobranzaEnvio;
 import org.autoservicio.backendcontratoservicio.repository.gestionclientes.FacturacionRepository;
 import org.autoservicio.backendcontratoservicio.response.FacturacionRequest;
@@ -25,4 +27,10 @@ public class FacturacionService {
     public Mono<List<FacturacionRequest>> obtener_buscar_facturas_pagos_enlinea(Buscarpagosenlinea enviodatos) {
         return Mono.fromCallable(() -> this.repo.obtener_buscar_facturas_pagos_enlinea(enviodatos));
     }
+
+    public Mono<responseModel> actualizar_factura(ActuatulizarFacturaModel enviodatos) {
+        return Mono.fromCallable(() -> this.repo.actualizar_factura(enviodatos));
+    }
+
+
 }

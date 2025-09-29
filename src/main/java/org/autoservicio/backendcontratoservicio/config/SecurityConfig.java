@@ -52,9 +52,13 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/swagger-resources/**",
                                 "/v2/api-docs/**"
-                        ).permitAll()
-                        .pathMatchers("/api/auth/**", "/contrato_servicio/api/auth/**").permitAll()
 
+                        ).permitAll()
+                        .pathMatchers("/api/auth/**","/api/facturacion/buscar_facturas_enlinea",
+                                "/api/facturacion/actualizar_factura",
+                                "/api/pagos/**",
+                                "/api/paramae/**",
+                                "/api/izipay/**").permitAll()
 
                         // Endpoints protegidos
                         .pathMatchers("/api/**", "/contrato_servicio/api/**").authenticated()
