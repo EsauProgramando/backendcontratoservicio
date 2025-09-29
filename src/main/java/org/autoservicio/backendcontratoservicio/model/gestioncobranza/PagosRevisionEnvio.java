@@ -4,7 +4,7 @@ package org.autoservicio.backendcontratoservicio.model.gestioncobranza;
 @lombok.Getter
 @lombok.Setter
 @lombok.Builder
-public class PagosEnvio {
+public class PagosRevisionEnvio {
     private Long id_pago ;
     private Long id_factura ;
     private Long id_cliente;
@@ -17,4 +17,8 @@ public class PagosEnvio {
     private String observaciones;
     private String creador;
     private String ticket;
+    private Double monto_confirmado;
+    private String fecharevision;
+    private String observacion_vache;
+    private String motivo_rechaso;
 }

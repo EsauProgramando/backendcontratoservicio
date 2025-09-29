@@ -20,4 +20,9 @@ public class FacturacionRequest {
     private String fechareg,desctipo,email;
     private Integer tipodocident;
     private String nrodocident,direccion,url_pdf;
+    private String ticket,fecha_pago;
+    private Double monto_confirmado;
+    private String fecharevision;
+    private String observacion_vache;
+    private String motivo_rechaso;
 }
