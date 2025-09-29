@@ -3,9 +3,12 @@ package org.autoservicio.backendcontratoservicio.controller.gestionclientes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.autoservicio.backendcontratoservicio.config.genericModel;
+import org.autoservicio.backendcontratoservicio.config.responseModel;
 import org.autoservicio.backendcontratoservicio.excepciones.GenericoException;
 import org.autoservicio.backendcontratoservicio.model.gestionclientes.Buscarpagosenlinea;
+import org.autoservicio.backendcontratoservicio.model.gestioncobranza.ActuatulizarFacturaModel;
 import org.autoservicio.backendcontratoservicio.model.gestioncobranza.CobranzaEnvio;
+import org.autoservicio.backendcontratoservicio.model.gestioncobranza.ReaperturaServicioModel;
 import org.autoservicio.backendcontratoservicio.response.FacturacionRequest;
 import org.autoservicio.backendcontratoservicio.response.ServicioContratadoRequest;
 import org.autoservicio.backendcontratoservicio.service.gestionclientes.FacturacionService;
@@ -53,5 +56,16 @@ public Mono<ResponseEntity<genericModel<List<FacturacionRequest>>>> obtener_fact
                 .doOnError(error -> log.error("Error en Operación: {}", error.getMessage()))
                 .onErrorResume(GenericoException::error);
 
+    }
+
+    @PostMapping("/actualizar_factura")
+    public @ResponseBody Mono<ResponseEntity<genericModel<responseModel>>> actualizarreapertura(
+            @RequestBody ActuatulizarFacturaModel form
+    ) {
+        return this.service.actualizar_factura(form)
+                .flatMap(GenericoException::success)
+                .doOnSuccess(response -> log.info("Operación exitosa"))
+                .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
+                .onErrorResume(GenericoException::error);
     }
 }

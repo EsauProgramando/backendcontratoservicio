@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.autoservicio.backendcontratoservicio.config.genericModel;
 import org.autoservicio.backendcontratoservicio.config.responseModel;
 import org.autoservicio.backendcontratoservicio.excepciones.GenericoException;
+import org.autoservicio.backendcontratoservicio.model.gestioncobranza.CorteServicioModel;
 import org.autoservicio.backendcontratoservicio.model.gestioncobranza.PagosEnvio;
+import org.autoservicio.backendcontratoservicio.model.gestioncobranza.PagosRevisionEnvio;
 import org.autoservicio.backendcontratoservicio.service.GoogleDriveService;
 import org.autoservicio.backendcontratoservicio.service.SParamae;
 import org.autoservicio.backendcontratoservicio.service.gestioncobranza.PagosService;
@@ -66,7 +68,17 @@ public class cPagos {
                 .doOnError(err -> log.error("Error en Operación", err))
                 .onErrorResume(GenericoException::error);
     }
-
+    @PostMapping("/registrar_revision/{op}")
+    public @ResponseBody Mono<ResponseEntity<genericModel<responseModel>>> registrarpagos_revision(
+            @PathVariable Integer op,
+            @RequestBody PagosRevisionEnvio form
+    ) {
+        return this.service.registrarpagos_revision(op,form)
+                .flatMap(GenericoException::success)
+                .doOnSuccess(response -> log.info("Operación exitosa"))
+                .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
+                .onErrorResume(GenericoException::error);
+    }
     // Utilidad para detectar extensión por metadata del data URI
     private String detectarExtension(String metadata) {
         if (metadata == null) return "bin";
