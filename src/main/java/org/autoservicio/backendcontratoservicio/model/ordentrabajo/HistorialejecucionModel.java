@@ -6,5 +6,5 @@ package org.autoservicio.backendcontratoservicio.model.ordentrabajo;
 @lombok.Setter
 @lombok.Builder
 public class HistorialejecucionModel {
-    private String archivobase64,extensiondoc,descripcion;
+    private String archivobase64,extensiondoc,descripcion,fecha,icon,color,path_imagen;
 }
