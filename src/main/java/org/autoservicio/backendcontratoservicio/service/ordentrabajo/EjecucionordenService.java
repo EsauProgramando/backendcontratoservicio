@@ -13,6 +13,7 @@ import org.autoservicio.backendcontratoservicio.util.base64Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.File;
 import java.util.List;
@@ -71,8 +72,23 @@ public Mono<responseModel> registrarejecucionorden(Integer op, EjecucionordenMod
 }
 
     public Mono<EjecucionordenModel> obtenerejecucionorden(String idejecucionorden) {
-        return Mono.fromCallable(() -> this.repo.obtenerejecucionorden(idejecucionorden));
+        return Mono.fromCallable(() -> this.repo.obtenerejecucionorden(idejecucionorden))
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(result ->
+                        Mono.zip(
+                                Mono.fromCallable(() -> this.repo.obtenerejecucionmateriales(idejecucionorden))
+                                        .subscribeOn(Schedulers.boundedElastic()),
+                                Mono.fromCallable(() -> this.repo.obtenerejecucion_historial(idejecucionorden))
+                                        .subscribeOn(Schedulers.boundedElastic())
+                        ).map(tuple -> {
+                            result.setMateriales(tuple.getT1());
+                            result.setHistorial(tuple.getT2());
+                            return result;
+                        })
+                );
     }
+
+
     public Mono<List<EjecucionordenModel>> listaejecucionordens(ListaOrdenRequest request) {
         return Mono.fromCallable(() -> this.repo.listaejecucions(request));
     }

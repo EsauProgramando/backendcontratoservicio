@@ -11,7 +11,7 @@ public class EjecucionordenModel {
     private String estado,idtecnico,idordentrabajo,observaciones;
     private Double latitud,longitud,potenciaopt,rssi,snr,descmbps,subbps,ping;
     private Boolean pinggateway,navegacionweb,speedtest,iptv,voip;
-    private String img_evidencia;
+    private String img_evidencia,idejecucion;
     private List<MaterialesejecModel> materiales;
     private List<HistorialejecucionModel> historial;
 
