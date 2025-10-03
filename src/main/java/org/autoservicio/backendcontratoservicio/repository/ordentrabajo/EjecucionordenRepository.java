@@ -8,6 +8,7 @@ import org.autoservicio.backendcontratoservicio.interfaces.ordetrabajo.IEjecucio
 import org.autoservicio.backendcontratoservicio.interfaces.ordetrabajo.IOrdentrabajoRepo;
 import org.autoservicio.backendcontratoservicio.model.ordentrabajo.EjecucionordenModel;
 import org.autoservicio.backendcontratoservicio.model.ordentrabajo.HistorialejecucionModel;
+import org.autoservicio.backendcontratoservicio.model.ordentrabajo.MaterialesejecModel;
 import org.autoservicio.backendcontratoservicio.model.ordentrabajo.OrdentrabajoModel;
 import org.autoservicio.backendcontratoservicio.request.ListaOrdenRequest;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -40,9 +41,37 @@ public class EjecucionordenRepository extends IConfigGeneric implements IEjecuci
     public EjecucionordenModel obtenerejecucionorden(String idejecucionorden) {
         try {
             //SELECT * FROM bitacora_servicio WHERE id_cliente = ?
-            String query = "SELECT * FROM ejecucionot WHERE idejecucionorden = ?";
+            String query = "SELECT * FROM ejecucionot WHERE idejecucion = ?";
             return this.jTemplate().queryForObject(query,
                     new BeanPropertyRowMapper<EjecucionordenModel>(EjecucionordenModel.class),
+                    idejecucionorden
+            );
+        } catch (Exception ex) {
+
+            throw new RepositorioException("error en listado: "+ex.getMessage());
+        }
+    }
+    @Override
+    public List<MaterialesejecModel> obtenerejecucionmateriales(String idejecucionorden) {
+        try {
+            //SELECT * FROM bitacora_servicio WHERE id_cliente = ?
+            String query = "CALL sp_obtener_materiales_x_ejecucionot(?)";
+            return this.jTemplate().query(query,
+                    new BeanPropertyRowMapper<MaterialesejecModel>(MaterialesejecModel.class),
+                    idejecucionorden
+            );
+        } catch (Exception ex) {
+
+            throw new RepositorioException("error en listado: "+ex.getMessage());
+        }
+    }
+    @Override
+    public List<HistorialejecucionModel> obtenerejecucionhistorial(String idejecucionorden) {
+        try {
+            //SELECT * FROM bitacora_servicio WHERE id_cliente = ?
+            String query = "SELECT * FROM historial_ejecucion WHERE idejecucion = ?";
+            return this.jTemplate().query(query,
+                    new BeanPropertyRowMapper<HistorialejecucionModel>(HistorialejecucionModel.class),
                     idejecucionorden
             );
         } catch (Exception ex) {

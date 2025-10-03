@@ -107,6 +107,19 @@ public class OrdentrabajoRepository extends IConfigGeneric implements IOrdentrab
         }
     }
     @Override
+    public List<OrdentrabajoModel> obtener_x_estado_ejecucion_tecnico(String estado,String idtecnico) {
+
+        try {
+            String query = "CALL sp_buscar_orden_trabajo_x_estado_ejecucion_tecnico(?,?)";
+            return this.jTemplate().query(query,
+                    new BeanPropertyRowMapper<OrdentrabajoModel>(OrdentrabajoModel.class),estado,idtecnico
+            );
+        } catch (Exception ex) {
+
+            throw new RepositorioException("error en listado por fecha: "+ex.getMessage());
+        }
+    }
+    @Override
     public List<OrdentecnicoModel> obtener_reporte_x_estado_tecnico(String estado, String idtecnico) {
 
         try {
