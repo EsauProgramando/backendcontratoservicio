@@ -77,6 +77,17 @@ public class cOrdentrabajo {
                 .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
                 .onErrorResume(GenericoException::error);
     }
+    @GetMapping("/buscar-x-estado-ejecucion-tecnico/{estado}/{idtecnico}")
+    public Mono<ResponseEntity<genericModel<List<OrdentrabajoModel>>>> obtener_x_estado_ejecucion_tecnico(
+            @PathVariable String estado,
+            @PathVariable String idtecnico
+    ) {
+        return this.service.obtener_x_estado_ejecucion_tecnico(estado,idtecnico)
+                .flatMap(GenericoException::success)
+                .doOnSuccess(response -> log.info("Operación exitosa"))
+                .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
+                .onErrorResume(GenericoException::error);
+    }
     @GetMapping("/buscar-reporte-x-estado-tecnico/{estado}/{idtecnico}")
     public Mono<ResponseEntity<genericModel<List<OrdentecnicoModel>>>> obtener_reporte_x_estado_tecnico(
             @PathVariable String estado,
