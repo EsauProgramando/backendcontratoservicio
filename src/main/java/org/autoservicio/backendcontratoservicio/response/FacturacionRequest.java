@@ -25,4 +25,7 @@ public class FacturacionRequest {
     private String fecharevision;
     private String observacion_vache;
     private String motivo_rechaso;
+    private Double monto_fracionado,saldo_fracionado;
+    private Integer flagfracionado,flagfechavencimiento;
+    private String fecha_vencimiento_nuevo;
 }

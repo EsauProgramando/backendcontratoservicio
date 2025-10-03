@@ -7,6 +7,8 @@ import org.autoservicio.backendcontratoservicio.config.responseModel;
 import org.autoservicio.backendcontratoservicio.excepciones.GenericoException;
 import org.autoservicio.backendcontratoservicio.model.gestioncobranza.BuscarNegociacion;
 import org.autoservicio.backendcontratoservicio.model.gestioncobranza.NegociacionModel;
+import org.autoservicio.backendcontratoservicio.response.ClienteContratoxServicio;
+import org.autoservicio.backendcontratoservicio.response.CortesServicioRequest;
 import org.autoservicio.backendcontratoservicio.response.Negociacion_clientesRequest;
 import org.autoservicio.backendcontratoservicio.service.gestioncobranza.NegociacionService;
 import org.springframework.http.ResponseEntity;
@@ -46,4 +48,24 @@ public class cNegociacion {
 
     }
 
+    @GetMapping("/clientesxServicioContratados/{id_cliente}")
+    public @ResponseBody Mono<ResponseEntity<genericModel<List<ClienteContratoxServicio>>>> clientesContratoxServicioContratados
+            (@PathVariable Integer id_cliente) {
+        return this.service.clientesContratoxServicioContratados(id_cliente)
+                .flatMap(GenericoException::success)
+                .doOnSuccess(response -> log.info("Operación exitosa"))
+                .doOnError(error -> log.error("Error en Operación: {}", error.getMessage()))
+                .onErrorResume(GenericoException::error);
+
+    }
+    @PostMapping("/modificar_estado")
+    public @ResponseBody Mono<ResponseEntity<genericModel<responseModel>>> modificarEstadoNegociacion(
+            @RequestBody NegociacionModel form
+    ) {
+        return this.service.modificarEstadoNegociacion(form)
+                .flatMap(GenericoException::success)
+                .doOnSuccess(response -> log.info("Operación exitosa"))
+                .doOnError((Throwable error) -> log.error("Error en Operación: {}", error.getMessage()))
+                .onErrorResume(GenericoException::error);
+    }
 }

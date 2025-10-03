@@ -7,4 +7,5 @@ package org.autoservicio.backendcontratoservicio.model.gestioncobranza;
 public class FacturasNociacionItemModel {
     private Long id_factura;
     private Double monto_fraccionado;
+    private String fecha_vencimiento_nuevo; // formato yyyy-MM-dd
 }

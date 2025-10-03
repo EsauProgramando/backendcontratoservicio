@@ -10,6 +10,7 @@ import java.util.List;
 public class NegociacionModel {
     private Long id_cliente;
     private Long id_contrato;
+    private Long id_negociacion;
     private Long id_tipo;
     private String canal_preferido;
     private String acciones_negociacion;
@@ -22,5 +23,8 @@ public class NegociacionModel {
     private Integer frecuencia_dias;
     private Double monto_total;
     private List<FacturasNociacionItemModel> facturas;
+
+    //OTROS
+    private String estado;
 
 }
